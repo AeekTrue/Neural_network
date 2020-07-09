@@ -33,32 +33,33 @@ class Network:
     def forward_feed(self, example):
         output = example
         for w, b in zip(self.weights, self.biases):
-            output = self.activation_function(np.dot(w, output) + b)
+            output = self.activate_function(np.dot(output, w.T) + b)
         return output
 
     def SGD(self, data, mini_batch_size, max_epochs, learning_rate, test_data=None):
-        num_examples = len(data)
+        num_examples = np.size(data, axis=0)
         if test_data is not None:
-            num_test_examples = len(test_data)
-        for epoch in range(max_epochs):
+            num_test_examples = np.size(test_data, axis=0)
+        for epoch in range(1, max_epochs + 1):
             np.random.shuffle(data)
             mini_batches = [data[k: k + mini_batch_size] for k in range(0, num_examples, mini_batch_size)]
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, learning_rate)
-            if test_data is not None:
-                success_tests = self.evaluate(test_data)
-                print('Epoch {}: {}/{}'.format(epoch, success_tests, num_test_examples))
-            else:
-                print("Epoch {} completed".format(epoch))
+            if epoch % 10 == 0:
+                if test_data is not None:
+                    success_tests = self.evaluate(test_data)
+                    print('Epoch {}: {}/{}'.format(epoch, success_tests, num_test_examples))
+                else:
+                    print("Epoch {} completed".format(epoch))
 
         if test_data is not None:
             return success_tests / num_test_examples
         return 0
 
     def update_mini_batch(self, mini_batch, learning_rate):
-        nabla_biases = [np.zeros(b.shape) for b in self.biases]
-        nabla_weights = [np.zeros(w.shape) for w in self.weights]
-        for x, y in mini_batch:
+        nabla_biases = [np.zeros(biases_layer.shape) for biases_layer in self.biases]
+        nabla_weights = [np.zeros(weights_of_layer.shape) for weights_of_layer in self.weights]
+        for x, y in zip(mini_batch[:, :-1], mini_batch[:, -1]):
             nabla_w, nabla_b = self.backprop(x, y)
             nabla_biases = [nbs + nb for nbs, nb in zip(nabla_biases, nabla_b)]
             nabla_weights = [nws + nw for nws, nw in zip(nabla_weights, nabla_w)]
@@ -95,7 +96,7 @@ class Network:
         return nabla_weights, nabla_biases
 
     def evaluate(self, test_data):
-        test_result = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
+        test_result = [(self.forward_feed(x).round(), y) for x, y in zip(test_data[:, :-1], test_data[:, -1])]
         return sum(int(x == y) for (x, y) in test_result)
 
     def cost_derivative(self, output_activations, y):
