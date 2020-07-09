@@ -45,7 +45,7 @@ class Network:
             mini_batches = [data[k: k + mini_batch_size] for k in range(0, num_examples, mini_batch_size)]
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, learning_rate)
-            if epoch % 10 == 0:
+            if epoch % 1 == 0:
                 if test_data is not None:
                     success_tests = self.evaluate(test_data)
                     print('Epoch {}: {}/{}'.format(epoch, success_tests, num_test_examples))
@@ -96,7 +96,7 @@ class Network:
         return nabla_weights, nabla_biases
 
     def evaluate(self, test_data):
-        test_result = [(self.forward_feed(x).round(), y) for x, y in zip(test_data[:, :-1], test_data[:, -1])]
+        test_result = [(np.argmax(self.forward_feed(x)), y) for x, y in zip(test_data[:, :-1], test_data[:, -1])]
         return sum(int(x == y) for (x, y) in test_result)
 
     def cost_derivative(self, output_activations, y):

@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def load_lesson(f_name):
-    data = np.loadtxt(f_name, delimiter=",", skiprows=1)
-    header = np.loadtxt(f_name, delimiter=",", max_rows=1, dtype=str)
+def load_lesson(path):
+    data = np.loadtxt(path, delimiter=",", skiprows=1)
+    header = np.loadtxt(path, delimiter=",", max_rows=1, dtype=str)
     return data, header
 
 
