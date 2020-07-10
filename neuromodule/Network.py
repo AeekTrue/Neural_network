@@ -33,7 +33,7 @@ class Network:
     def forward_feed(self, example):
         output = example
         for w, b in zip(self.weights, self.biases):
-            output = self.activate_function(np.dot(output, w.T) + b)
+            output = self.activate_function(np.dot(w, output) + b)
         return output
 
     def SGD(self, data, mini_batch_size, max_epochs, learning_rate, test_data=None):
