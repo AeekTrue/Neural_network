@@ -1,4 +1,6 @@
 import numpy as np
+from .logger import sgd_logger
+from .configurator import save_neural_network
 
 
 def sigmoid(x):
@@ -50,9 +52,12 @@ class Network:
 
             if test_data is not None:
                 present_success_tests = self.evaluate(test_data)
-                print('Epoch {}: {}%'.format(epoch, present_success_tests))
+                sgd_logger.info('', extra={'epoch': epoch, 'right_answers_present': present_success_tests})
             else:
-                print("Epoch {} completed".format(epoch))
+                sgd_logger.info('', extra={'epoch': epoch, 'right_answers_present': 0})
+
+            if epoch % 10 == 0:
+                save_neural_network(self)
 
         if test_data is not None:
             return self.evaluate(test_data)
@@ -146,7 +151,7 @@ class Network:
         """
         num_test_examples = np.size(test_data, axis=0)
         test_result = [(np.argmax(self.forward_feed(x)), y) for x, y in zip(test_data[:, :-1], test_data[:, -1])]
-        return sum(int(x == y) for (x, y) in test_result) / num_test_examples
+        return sum(int(x == y) for (x, y) in test_result) / num_test_examples * 100
 
     def cost_derivative(self, output_activations, y):
         """
@@ -154,3 +159,10 @@ class Network:
         целевой функции по активациям выходного слоя.
         """
         return output_activations - y
+
+
+if __name__ == '__main__':
+    struc = np.array([3, 2, 1])
+    nn = Network(struc)
+    print(nn.weights)
+    save_neural_network(nn)

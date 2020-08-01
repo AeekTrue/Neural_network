@@ -1,15 +1,18 @@
 from mnist import MNIST
 import numpy as np
+from .logger import loader_logger
 
 
 def get_data():
     """
-    Загружаем данные из файлов MNIST.
+    Загружает данные из файлов MNIST.
     """
-    mnist_data_training = MNIST("./training_data", gz=True)
+    num_examples = 60000
+    num_tests = 10000
+    mnist_data_training = MNIST(__path__[0] + "\\training_data", gz=True)
     images, labels = mnist_data_training.load_training()
     test_images, test_labels = mnist_data_training.load_testing()
-
+    loader_logger.info('MNIST successfully loaded')
     """
     Создаем из загруженных данных numpy массивы
     и задаём им формы.
@@ -41,4 +44,5 @@ def get_data():
 
     training_data = np.concatenate([digits, answers], axis=1)
     test_data = np.concatenate([test_digits, test_answers], axis=1)
+    loader_logger.info('Data successfully created')
     return training_data, test_data
