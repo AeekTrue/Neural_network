@@ -1,5 +1,5 @@
 import numpy as np
-from .logger import sgd_logger
+from .logger import logger
 from .configurator import save_neural_network
 
 
@@ -11,16 +11,30 @@ def sigmoid_derivative(x):
     return sigmoid(x) * (1 - sigmoid(x))
 
 
+def cost_function(output_activations, y):
+    pass
+
+
+def cost_derivative(output_activations, y):
+    """
+    Возвращает вектор частных производных
+    целевой функции по активациям выходного слоя.
+    """
+    return output_activations - y
+
+
 class Network:
     def __init__(self, structure: np.ndarray, weights=None, biases=None,
                  activate_function=sigmoid,
-                 activate_derivative=sigmoid_derivative):
+                 activate_der=sigmoid_derivative,
+                 cost_der=cost_derivative):
         num_layers = len(structure)
 
         self.num_layers = num_layers
         self.structure = structure
         self.activate_function = activate_function
-        self.activate_derivative = activate_derivative
+        self.activate_derivative = activate_der
+        self.cost_derivative = cost_der
 
         if weights is not None:
             self.weights = weights
@@ -42,7 +56,6 @@ class Network:
         """
         Обучение нейросети методом стохастического градиентного спуска.
         """
-
         num_examples = np.size(data, axis=0)
         for epoch in range(max_epochs):
             np.random.shuffle(data)
@@ -52,9 +65,9 @@ class Network:
 
             if test_data is not None:
                 present_success_tests = self.evaluate(test_data)
-                sgd_logger.info('', extra={'epoch': epoch, 'right_answers_present': present_success_tests})
+                logger.bind(epoch=epoch, right_answers_present=round(present_success_tests, 3)).info('')
             else:
-                sgd_logger.info('', extra={'epoch': epoch, 'right_answers_present': 0})
+                logger.bind(epoch=epoch, right_answers_present=0).info('')
 
             if epoch % 10 == 0:
                 save_neural_network(self)
@@ -152,13 +165,6 @@ class Network:
         num_test_examples = np.size(test_data, axis=0)
         test_result = [(np.argmax(self.forward_feed(x)), y) for x, y in zip(test_data[:, :-1], test_data[:, -1])]
         return sum(int(x == y) for (x, y) in test_result) / num_test_examples * 100
-
-    def cost_derivative(self, output_activations, y):
-        """
-        Возвращает вектор частных производных
-        целевой функции по активациям выходного слоя.
-        """
-        return output_activations - y
 
 
 if __name__ == '__main__':

@@ -1,24 +1,7 @@
-import logging
+from loguru import logger
+import sys
 
-SGD_FORMAT = '%(asctime)s --- %(name)s %(levelname)s: Epoch #%(epoch)s %(right_answers_present)3f%%'
-sgd_formatter = logging.Formatter(SGD_FORMAT, datefmt='%d.%m.%Y %X')
-
-sgd_handler = logging.StreamHandler()
-sgd_handler.setLevel(logging.INFO)
-sgd_handler.setFormatter(sgd_formatter)
-
-sgd_logger = logging.getLogger('SGD')
-sgd_logger.setLevel(logging.INFO)
-sgd_logger.handlers = [sgd_handler]
-
-
-CONFIGURATOR_FORMAT = '%(asctime)s --- %(name)s %(levelname)s: %(msg)s'
-configurator_formatter = logging.Formatter(CONFIGURATOR_FORMAT, datefmt='%d.%m.%Y %X')
-
-configurator_handler = logging.StreamHandler()
-configurator_handler.setLevel(logging.INFO)
-configurator_handler.setFormatter(configurator_formatter)
-
-configurator_logger = logging.getLogger('Configurator')
-configurator_logger.setLevel(logging.INFO)
-configurator_logger.handlers = [configurator_handler]
+SGD_FORMAT = '[{time:HH:mm:ss}] <lvl>{name} {level}:</> Epoch #{extra[epoch]} {extra[right_answers_present]}%'
+CONF_FORMAT = '[{time:HH:mm:ss}] <lvl>{name} {level}:</> {message}'
+logger.add(sys.stderr, level='INFO', format=SGD_FORMAT, filter=lambda rec: rec['name'] == 'network')
+logger.add(sys.stderr, level='INFO', format=CONF_FORMAT, filter=lambda rec: rec['name'] == 'network.configurator')
