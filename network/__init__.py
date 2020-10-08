@@ -12,12 +12,18 @@ def sigmoid_derivative(x):
 
 
 def cost_function(output_activations, y):
-    pass
+    """
+    Возвращает вектор значений квадратичной целевой функции
+    по активациям выходного слоя.
+    x - вектор выходных активаций
+    y - вектор правильных ответов
+    """
+    return 0.5 * (output_activations - y)**2
 
 
 def cost_derivative(output_activations, y):
     """
-    Возвращает вектор частных производных
+    Возвращает вектор частных производных квадратичной
     целевой функции по активациям выходного слоя.
     """
     return output_activations - y
@@ -65,9 +71,10 @@ class Network:
 
             if test_data is not None:
                 present_success_tests = self.evaluate(test_data)
-                logger.bind(epoch=epoch, right_answers_present=round(present_success_tests, 3)).info('')
+                j_average = self.J_average(test_data)
+                logger.bind(epoch=epoch, r=round(present_success_tests, 3), j=j_average).info('')
             else:
-                logger.bind(epoch=epoch, right_answers_present=0).info('')
+                logger.bind(epoch=epoch, r=0).info('')
 
             if epoch % 10 == 0:
                 save_neural_network(self)
@@ -165,6 +172,15 @@ class Network:
         num_test_examples = np.size(test_data, axis=0)
         test_result = [(np.argmax(self.forward_feed(x)), y) for x, y in zip(test_data[:, :-1], test_data[:, -1])]
         return sum(int(x == y) for (x, y) in test_result) / num_test_examples * 100
+
+    def J_average(self, test_data):
+        """
+        Возвращает сумму значений cost_function
+        на тестовой выборке.
+        """
+        output_activation = np.array([self.forward_feed(x) for x in test_data[:, :-1]])
+        j_vector = cost_function(output_activation, test_data[:, -1])
+        return sum(j_vector)
 
 
 if __name__ == '__main__':
