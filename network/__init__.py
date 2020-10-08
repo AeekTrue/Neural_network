@@ -184,7 +184,7 @@ class Network:
 
 
 if __name__ == '__main__':
-    struc = np.array([3, 2, 1])
-    nn = Network(struc)
+    struct = np.array([3, 2, 1])
+    nn = Network(struct)
     print(nn.weights)
     save_neural_network(nn)
