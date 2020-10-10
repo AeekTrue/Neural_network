@@ -11,21 +11,25 @@ def sigmoid_derivative(x):
     return sigmoid(x) * (1 - sigmoid(x))
 
 
-def cost_function(output_activations, y):
+def cost_function(output_activations, one_hot_index):
     """
-    Возвращает вектор значений квадратичной целевой функции
+    Возвращает значение квадратичной целевой функции
     по активациям выходного слоя.
-    x - вектор выходных активаций
-    y - вектор правильных ответов
+    output_activations - вектор выходных активаций
+    one_hot_index - номер активного выходного нейрона, соответствующий правильному ответу
     """
-    return 0.5 * (output_activations - y)**2
+    y = np.zeros_like(output_activations)
+    y[int(one_hot_index)] = 1  # Здесь создается вектор правильных активаций на основе one_hot_index
+    return 0.5 * np.sum((output_activations - y) ** 2)
 
 
-def cost_derivative(output_activations, y):
+def cost_derivative(output_activations, one_hot_index):
     """
     Возвращает вектор частных производных квадратичной
     целевой функции по активациям выходного слоя.
     """
+    y = np.zeros_like(output_activations)
+    y[int(one_hot_index)] = 1  # Здесь создается вектор правильных активаций на основе one_hot_index
     return output_activations - y
 
 
@@ -76,7 +80,7 @@ class Network:
             else:
                 logger.bind(epoch=epoch, r=0).info('')
 
-            if epoch % 10 == 0:
+            if epoch % 1 == 0:
                 save_neural_network(self)
 
         if test_data is not None:
@@ -97,7 +101,7 @@ class Network:
 
         """
         x - текущий пример из mini_batch
-        y - ответ к примеру x
+        one_hot_index - ответ к примеру x
         
         Важно понимать: производная ц.ф. по параметру на нескольких примерах - 
         это есть среднее арифметическое производной по этому параметру на каждых примерах в отдельности.
@@ -126,7 +130,7 @@ class Network:
         на одном примере.
 
         x - пример (вертикальный вектор)
-        y - правельный ответ для примера x
+        one_hot_index - правельный ответ для примера x
         nabla_biases - матрица производных целевой функции по всем смещениям
         nabla_weights - матрица производных целевой функции по всем весам
         """
@@ -173,14 +177,18 @@ class Network:
         test_result = [(np.argmax(self.forward_feed(x)), y) for x, y in zip(test_data[:, :-1], test_data[:, -1])]
         return sum(int(x == y) for (x, y) in test_result) / num_test_examples * 100
 
-    def J_average(self, test_data):
+    def J_average(self, test_data: np.ndarray):
         """
-        Возвращает сумму значений cost_function
+        Возвращает среднее значение cost_function
         на тестовой выборке.
         """
-        output_activation = np.array([self.forward_feed(x) for x in test_data[:, :-1]])
-        j_vector = cost_function(output_activation, test_data[:, -1])
-        return sum(j_vector)
+        total_cost = 0
+        num_test_examples = np.size(test_data, axis=0)
+        for x, y in zip(test_data[:, :-1], test_data[:, -1]):
+            output_activation = self.forward_feed(x)
+            total_cost += cost_function(output_activation, y)
+
+        return total_cost / num_test_examples
 
 
 if __name__ == '__main__':
