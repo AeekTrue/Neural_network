@@ -24,6 +24,7 @@ sc = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 f1 = pygame.font.Font(None, 36)
 
+
 def draw_field():
     sc.fill(BACKGROUND)
     cur_y = corner_left_up[1]
@@ -37,13 +38,13 @@ def draw_field():
     pygame.display.update()
 
 
-
 def get_unit_coordinates(x, y):
     unit_x = (x - corner_left_up[0]) // UNIT_SIZE
     unit_y = (y - corner_left_up[1]) // UNIT_SIZE
-    return  unit_x, unit_y
+    return unit_x, unit_y
 
-def activate_unit(u_x, u_y, matrix):#зарисовывает клеточку, и добавляет её в матрицу
+
+def activate_unit(u_x, u_y, matrix):#зарисовывает клеточку и добавляет её в матрицу
     new_matrix = matrix
     new_matrix[u_x, u_y] = 0.75
     rectangle = pygame.Rect(corner_left_up[0] + u_x * UNIT_SIZE,
@@ -51,6 +52,8 @@ def activate_unit(u_x, u_y, matrix):#зарисовывает клеточку, 
                             UNIT_SIZE, UNIT_SIZE)
     pygame.draw.rect(sc, ACTIVE_UNIT_COLOR, rectangle)
     return new_matrix
+
+
 def position_validator(x, y):
     """
     :return: 1 если мышь в области рисования, иначе 0
@@ -58,6 +61,7 @@ def position_validator(x, y):
     x_valid = x >= x_area[0] and x <x_area[1]
     y_valid = y >= y_area[0] and y <y_area[1]
     return  x_valid and y_valid
+
 
 def get_picture():
     done = False

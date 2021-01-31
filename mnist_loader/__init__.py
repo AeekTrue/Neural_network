@@ -1,7 +1,7 @@
 from mnist import MNIST
 import numpy as np
 from .logger import logger
-
+from os.path import join
 
 def get_data():
     """
@@ -9,7 +9,7 @@ def get_data():
     """
     num_examples = 60000
     num_tests = 10000
-    mnist_data_training = MNIST(__path__[0] + "\\training_data", gz=True)
+    mnist_data_training = MNIST(join(__path__[0], "training_data"), gz=True)
     images, labels = mnist_data_training.load_training()
     test_images, test_labels = mnist_data_training.load_testing()
     logger.success('MNIST is loaded')

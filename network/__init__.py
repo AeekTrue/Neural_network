@@ -62,7 +62,7 @@ class Network:
             output = self.activate_function(np.dot(w, output) + b)
         return output
 
-    def SGD(self, data, mini_batch_size, max_epochs, learning_rate, test_data=None):
+    def sgd(self, data, mini_batch_size, max_epochs, learning_rate, output_dir, test_data=None):
         """
         Обучение нейросети методом стохастического градиентного спуска.
         """
@@ -81,7 +81,7 @@ class Network:
                 logger.bind(epoch=epoch, r=0).info('')
 
             if epoch % 1 == 0:
-                save_neural_network(self)
+                save_neural_network(self, output_dir)
 
         if test_data is not None:
             return self.evaluate(test_data)
@@ -195,4 +195,3 @@ if __name__ == '__main__':
     struct = np.array([3, 2, 1])
     nn = Network(struct)
     print(nn.weights)
-    save_neural_network(nn)
