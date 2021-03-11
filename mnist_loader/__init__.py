@@ -1,6 +1,7 @@
 from mnist import MNIST
 import numpy as np
 from .logger import logger
+import os
 
 
 def get_data():
@@ -9,7 +10,8 @@ def get_data():
     """
     num_examples = 60000
     num_tests = 10000
-    mnist_data_training = MNIST(__path__[0] + "\\training_data", gz=True)
+    path = os.path.join(__path__[0], "training_data")
+    mnist_data_training = MNIST(path, gz=True)
     images, labels = mnist_data_training.load_training()
     test_images, test_labels = mnist_data_training.load_testing()
     logger.success('MNIST is loaded')
@@ -35,12 +37,12 @@ def get_data():
 
     """
     Раскомментируйте если нужны двухцветные изображения
-    и укажите порог градации (100 по умолчанию).
+    и укажите порог градации (0.5 по умолчанию).
     """
-    # digits = digits > 100
-    # digits = digits.round()
-    # test_digits = test_digits > 100
-    # test_digits = test_digits.round()
+    digits = digits > 0.2
+    digits = digits.round()
+    test_digits = test_digits > 0.2
+    test_digits = test_digits.round()
 
     training_data = np.concatenate([digits, answers], axis=1)
     test_data = np.concatenate([test_digits, test_answers], axis=1)

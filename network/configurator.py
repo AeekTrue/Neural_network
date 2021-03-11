@@ -5,7 +5,7 @@ from .logger import logger
 
 
 def save_neural_network(network):
-    OUTPUT_DIRECTORY = 'D:\\Machine_learning_output\\'  # Hardcode WARNING!
+    OUTPUT_DIRECTORY = '/home/aeek/dev/Neural_network_output/'  # Hardcode WARNING!
     directory = strftime("%Y%m%d_%H%M%S_neural_network")
     path = os.path.join(OUTPUT_DIRECTORY, directory)
     os.mkdir(path)

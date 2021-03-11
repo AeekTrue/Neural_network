@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import network
 import numpy as np
 import mnist_loader

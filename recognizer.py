@@ -1,28 +1,30 @@
+#!/usr/bin/python3
 import pygame
 import numpy as np
 import sys
 import network
 pygame.init()
 
+cast_of_network = input('Enter path to files of neural network: ')
 # variables
 WIDTH = pygame.display.Info().current_w
 HEIGHT = pygame.display.Info().current_h
 # WIDTH, HEIGHT=800,600
 FPS = 60
-corner_left_up = (100, 100)
+corner_left_up = (400, 100)
 BACKGROUND = (0, 0, 0)
 FIELD_COLOR = (100, 100, 100)
-ACTIVE_UNIT_COLOR = (12,140,253)
+ACTIVE_UNIT_COLOR = (12, 140, 253)
 FIELD_W, FIELD_H = 28, 28
-UNIT_SIZE = 30
+UNIT_SIZE = 20
 x_area = (corner_left_up[0], corner_left_up[0] + FIELD_W * UNIT_SIZE)  # кликабельная область по x
 y_area = (corner_left_up[1], corner_left_up[1] + FIELD_H * UNIT_SIZE)  # кликабельная область по y
 
-# init/create objs
 # sc = pygame.display.set_mode((WIDTH,HEIGHT))
 sc = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 f1 = pygame.font.Font(None, 36)
+
 
 def draw_field():
     sc.fill(BACKGROUND)
@@ -37,11 +39,11 @@ def draw_field():
     pygame.display.update()
 
 
-
 def get_unit_coordinates(x, y):
     unit_x = (x - corner_left_up[0]) // UNIT_SIZE
     unit_y = (y - corner_left_up[1]) // UNIT_SIZE
     return  unit_x, unit_y
+
 
 def activate_unit(u_x, u_y, matrix):#зарисовывает клеточку, и добавляет её в матрицу
     new_matrix = matrix
@@ -51,6 +53,8 @@ def activate_unit(u_x, u_y, matrix):#зарисовывает клеточку, 
                             UNIT_SIZE, UNIT_SIZE)
     pygame.draw.rect(sc, ACTIVE_UNIT_COLOR, rectangle)
     return new_matrix
+
+
 def position_validator(x, y):
     """
     :return: 1 если мышь в области рисования, иначе 0
@@ -58,6 +62,7 @@ def position_validator(x, y):
     x_valid = x >= x_area[0] and x <x_area[1]
     y_valid = y >= y_area[0] and y <y_area[1]
     return  x_valid and y_valid
+
 
 def get_picture():
     done = False
@@ -80,14 +85,15 @@ def get_picture():
 # display objs
 pygame.display.update()
 struct = np.array([784, 16, 16, 10])
-w, b = network.configurator.load_neural_network('F:\\Machine_learning_output\\90presents\\')
+w, b = network.configurator.load_neural_network(cast_of_network)
 net = network.Network(struct, w, b)
-answer = None
+answer = "Hello, let`s draw arabic numerals!"
+
 # main loop
 while 1:
 
     draw_field()
-    text_answer = f1.render(str(answer), 1, FIELD_COLOR)
+    text_answer = f1.render("I guess it is " + str(answer), 1, FIELD_COLOR)
     sc.blit(text_answer, (0, 0))
     pygame.display.update()
 
@@ -99,11 +105,8 @@ while 1:
         if event.type == 2 and event.key == 27:
             sys.exit()
 
-    # edit objs and other
     # UPD display
-
     pygame.display.update()
 
     # pause
-
     clock.tick(FPS)
