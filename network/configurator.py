@@ -4,10 +4,9 @@ import os
 from .logger import logger
 
 
-def save_neural_network(network):
-    OUTPUT_DIRECTORY = '/home/aeek/dev/Neural_network_output/'  # Hardcode WARNING!
+def save_neural_network(network, output_dir):
     directory = strftime("%Y%m%d_%H%M%S_neural_network")
-    path = os.path.join(OUTPUT_DIRECTORY, directory)
+    path = os.path.join(output_dir, directory)
     os.mkdir(path)
     weights, biases = network.weights, network.biases
     np.save(os.path.join(path, 'weights.npy'), weights)

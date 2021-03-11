@@ -42,10 +42,10 @@ def draw_field():
 def get_unit_coordinates(x, y):
     unit_x = (x - corner_left_up[0]) // UNIT_SIZE
     unit_y = (y - corner_left_up[1]) // UNIT_SIZE
-    return  unit_x, unit_y
+    return unit_x, unit_y
 
 
-def activate_unit(u_x, u_y, matrix):#зарисовывает клеточку, и добавляет её в матрицу
+def activate_unit(u_x, u_y, matrix):#зарисовывает клеточку и добавляет её в матрицу
     new_matrix = matrix
     new_matrix[u_x, u_y] = 0.75
     rectangle = pygame.Rect(corner_left_up[0] + u_x * UNIT_SIZE,
